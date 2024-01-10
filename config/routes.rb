@@ -14,4 +14,10 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: [:index, :show]
+
+  get '/products' => 'products#index'
+  get '/product/:id' => 'products#show'
+  post '/product/add' => 'products#create'
+  put '/product/edit/:id' => 'products#update'
+  delete '/product/delete/:id' => 'products#destroy'
 end
