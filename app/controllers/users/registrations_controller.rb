@@ -46,9 +46,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   # DELETE /resource
-  # def destroy
-  #   super
-  # end
+  def destroy
+    resource.destroy
+    render json: { code: 200, message: 'User deleted successfully', data: resource }, status: :ok
+  end
 
   # GET /resource/cancel
   # Forces the session data which is usually expired after sign

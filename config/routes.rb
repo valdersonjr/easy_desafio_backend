@@ -5,10 +5,11 @@ Rails.application.routes.draw do
   }
 
   devise_scope :user do
-    post '/users/sign_up' => 'users/registrations#create'
-    put '/users/edit' => 'users/registrations#update'
+    post '/user/sign_up' => 'users/registrations#create'
+    put '/user/edit' => 'users/registrations#update'
+    delete '/user/delete' => 'users/registrations#destroy'
 
-    post '/users/sign_in' => 'users/sessions#create'
-    delete '/users/sign_out' => 'users/sessions#destroy'
+    post '/user/sign_in' => 'users/sessions#create'
+    delete '/user/sign_out' => 'users/sessions#destroy'
   end
 end
