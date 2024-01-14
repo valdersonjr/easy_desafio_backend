@@ -9,6 +9,8 @@ RSpec.describe User, type: :model do
     it { should validate_uniqueness_of(:email).case_insensitive }
     it { should validate_length_of(:password).is_at_least(Devise.password_length.min).is_at_most(Devise.password_length.max).on(:create) }
     it { should have_db_index(:email).unique }
+    it { should validate_presence_of(:profile) }
+    it { should define_enum_for(:profile).with_values({ admin: 0, client: 1 }) }
   end
 
   describe 'Devise JWT' do

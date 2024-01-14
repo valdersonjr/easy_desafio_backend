@@ -8,4 +8,7 @@ class User < ApplicationRecord
   validates :email, presence: true
   validates :password, presence: true, on: %i[create update]
   validates :password_confirmation, presence: true, on: %i[create update]
+  validates :profile, presence:true
+
+  enum profile: { admin: 0, client: 1 }
 end
