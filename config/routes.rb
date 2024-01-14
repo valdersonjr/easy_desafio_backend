@@ -13,7 +13,8 @@ Rails.application.routes.draw do
     delete '/user/sign_out' => 'users/sessions#destroy'
   end
 
-  resources :users, only: [:index, :show]
+  get '/users' => 'users/users#index'
+  get '/users/:id' => 'users/users#show'
 
   get '/products' => 'products#index'
   get '/product/:id' => 'products#show'
