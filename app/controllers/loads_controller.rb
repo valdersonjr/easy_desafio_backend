@@ -2,10 +2,16 @@ class LoadsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @loads = Load.all
+    page = params[:page] || 1
+    per_page = params[:per_page] || 10
+
+    @loads = Load.paginate(page: page, per_page: per_page)
 
     if @loads.any?
-        render json: { loads: LoadSerializer.new(@loads).serializable_hash }, status: :ok
+      render json: {
+        loads: LoadSerializer.new(@loads).serializable_hash,
+        meta: pagination_meta(@loads)
+      }, status: :ok
     else
         render json: { message: 'There is no existing load' }, status: :not_found
     end

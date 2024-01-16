@@ -2,10 +2,16 @@ class ProductsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @products = Product.all
+    page = params[:page] || 1
+    per_page = params[:per_page] || 10
+
+    @products = Product.paginate(page: page, per_page: per_page)
 
     if @products.any?
-      render json: { products: ProductSerializer.new(@products).serializable_hash }, status: :ok
+      render json: {
+        products: ProductSerializer.new(@products).serializable_hash,
+        meta: pagination_meta(@products)
+      }, status: :ok
     else
       render json: { message: 'There is no existing product' }, status: :not_found
     end
