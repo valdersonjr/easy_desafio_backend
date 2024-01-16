@@ -32,7 +32,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
         update_user(current_user)
       end
     elsif current_user.profile == "client"
-      update_user(current_user)
+      if params[:user][:profile].present? && !(params[:user][:profile] == "client" || params[:user][:profile] == 1)
+        render json: { message: 'Unauthorized', errors: ['Clients are not allowed to update the profile field.'] }, status: :unauthorized
+      else
+        update_user(current_user)
+      end
     else
       render json: { message: 'Unauthorized', errors: ['You do not have permission to update users.'] }, status: :unauthorized
     end
