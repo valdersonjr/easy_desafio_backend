@@ -3,6 +3,7 @@ class ProductsController < ApplicationController
 
   def index
     @products = Product.all
+
     if @products.any?
       render json: { products: ProductSerializer.new(@products).serializable_hash }, status: :ok
     else
@@ -16,13 +17,13 @@ class ProductsController < ApplicationController
     if @product
       render json: ProductSerializer.new(@product).serializable_hash
     else
-      render json: { error: 'Product not found' }, status: :not_found
+      render json: { message: 'Product not found' }, status: :not_found
     end
   end
 
   def create
     if current_user.profile != 'admin'
-      render json: { error: 'You are not allowed to create a product' }, status: :forbidden
+      render json: { message: 'You are not allowed to create a product' }, status: :forbidden
       return
     end
 
@@ -33,7 +34,7 @@ class ProductsController < ApplicationController
 
   def update
     if current_user.profile != 'admin'
-      render json: { error: 'You are not allowed to update a product' }, status: :forbidden
+      render json: { message: 'You are not allowed to update a product' }, status: :forbidden
       return
     end
 
@@ -43,15 +44,15 @@ class ProductsController < ApplicationController
       @product.update(product_params)
       render json: ProductSerializer.new(@product).serializable_hash
     else
-      render json: { error: 'Product not found' }, status: :not_found
+      render json: { message: 'Product not found' }, status: :not_found
     end
   rescue StandardError => e
-    render json: { error: "An error occurred: #{e.message}" }, status: :internal_server_error
+    render json: { error: "An error occurred" }, status: :internal_server_error
   end
 
   def destroy
     if current_user.profile != 'admin'
-      render json: { error: 'You are not allowed to create a product' }, status: :forbidden
+      render json: { message: 'You are not allowed to create a product' }, status: :forbidden
       return
     end
 
@@ -61,10 +62,10 @@ class ProductsController < ApplicationController
       @product.destroy
       render json: { message: 'Product successfully deleted' }, status: :ok
     else
-      render json: { error: 'Product not found' }, status: :not_found
+      render json: { message: 'Product not found' }, status: :not_found
     end
   rescue StandardError => e
-    render json: { error: "An error occurred: #{e.message}" }, status: :internal_server_error
+    render json: { error: "An error occurred" }, status: :internal_server_error
   end
 
   private
@@ -76,8 +77,8 @@ class ProductsController < ApplicationController
 
   def save_product!
     @product.save!
-    render json: ProductSerializer.new(@product).serializable_hash
+    render json: ProductSerializer.new(@product).serializable_hash, status: :created
   rescue StandardError => e
-    render json: { error: "An error occurred: #{e.message}" }, status: :internal_server_error
+    render json: { error: "An error occurred" }, status: :internal_server_error
   end
 end
