@@ -21,4 +21,10 @@ Rails.application.routes.draw do
   post '/product/add' => 'products#create'
   put '/product/edit/:id' => 'products#update'
   delete '/product/delete/:id' => 'products#destroy'
+
+  get '/loads' => 'loads#index'
+  get '/load/:id' => 'loads#show'
+  post '/load/add' => 'loads#create'
+  put '/load/edit/:id' => 'loads#update'
+  delete '/load/delete/:id' => 'loads#destroy'
 end
