@@ -24,7 +24,7 @@ RSpec.describe "Products", type: :request do
     it 'returns a list of products' do
       create_list(:product, 10)
       get '/products', headers: @auth_headers
-      expect(body_json(response)['products'].count).to eq(10)
+      expect(body_json(response)['data'].count).to eq(10)
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe "Products", type: :request do
     it 'returns a product' do
       product = create(:product)
       get "/product/#{product.id}", headers: @auth_headers
-      expect(body_json(response)['id'].to_i).to eq(product.id)
+      expect(body_json(response)['data']['id'].to_i).to eq(product.id)
     end
   end
 
@@ -64,7 +64,7 @@ RSpec.describe "Products", type: :request do
 
       it 'returns a product' do
         post '/product/add', params: { product: attributes_for(:product) }, headers: @auth_headers
-        expect(body_json(response)['id'].to_i).to eq(Product.last.id)
+        expect(body_json(response)['data']['id'].to_i).to eq(Product.last.id)
       end
     end
 
@@ -95,7 +95,7 @@ RSpec.describe "Products", type: :request do
       it 'returns a product' do
         product = create(:product)
         put "/product/edit/#{product.id}", params: { product: attributes_for(:product) }, headers: @auth_headers
-        expect(body_json(response)['id'].to_i).to eq(product.id)
+        expect(body_json(response)['data']['id'].to_i).to eq(product.id)
       end
     end
 

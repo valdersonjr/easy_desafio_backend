@@ -8,12 +8,9 @@ class Users::UsersController < ApplicationController
         @users = User.paginate(page: page, per_page: per_page)
 
         if @users.any?
-            render json: {
-                users: UserSerializer.new(@users).serializable_hash,
-                meta: pagination_meta(@users)
-            }, status: :ok
+            render_json_response(nil, :ok, UserSerializer.new(@users).serializable_hash, pagination_meta(@users))
         else
-            render json: { message: 'There is no existing user' }, status: :not_found
+            render_json_response('There is no existing user', :not_found)
         end
     end
 
@@ -21,9 +18,9 @@ class Users::UsersController < ApplicationController
         @user = User.find_by(id: params[:id])
 
         if @user
-            render json: UserSerializer.new(@user).serializable_hash
+            render_json_response(nil, :ok, UserSerializer.new(@user).serializable_hash)
         else
-            render json: { error: 'User not found' }, status: :not_found
+            render_json_response('User not found', :not_found)
         end
     end
 end

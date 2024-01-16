@@ -9,12 +9,9 @@ class ProductsController < ApplicationController
     @products = Product.paginate(page: page, per_page: per_page)
 
     if @products.any?
-      render json: {
-        products: ProductSerializer.new(@products).serializable_hash,
-        meta: pagination_meta(@products)
-      }, status: :ok
+      render_json_response(nil, :ok, ProductSerializer.new(@products).serializable_hash, pagination_meta(@products))
     else
-      render json: { message: 'There is no existing product' }, status: :not_found
+      render_json_response('There is no existing product', :not_found, nil, nil)
     end
   end
 
@@ -22,9 +19,9 @@ class ProductsController < ApplicationController
     @product = Product.find_by(id: params[:id])
 
     if @product
-      render json: ProductSerializer.new(@product).serializable_hash
+      render_json_response(nil, :ok, ProductSerializer.new(@product).serializable_hash, nil)
     else
-      render json: { message: 'Product not found' }, status: :not_found
+      render_json_response('Product not found', :not_found, nil, nil)
     end
   end
 
@@ -39,12 +36,12 @@ class ProductsController < ApplicationController
 
     if @product
       @product.update(product_params)
-      render json: ProductSerializer.new(@product).serializable_hash
+      render_json_response(nil, :ok, ProductSerializer.new(@product).serializable_hash, nil)
     else
-      render json: { message: 'Product not found' }, status: :not_found
+      render_json_response('Product not found', :not_found, nil, nil)
     end
   rescue StandardError => e
-    render json: { error: "An error occurred" }, status: :internal_server_error
+    render_json_response(e, :not_found, nil, nil)
   end
 
   def destroy
@@ -52,12 +49,12 @@ class ProductsController < ApplicationController
 
     if @product
       @product.destroy
-      render json: { message: 'Product successfully deleted' }, status: :ok
+      render_json_response('Product successfully deleted', :ok, nil, nil)
     else
-      render json: { message: 'Product not found' }, status: :not_found
+      render_json_response('Product not found', :not_found, nil, nil)
     end
   rescue StandardError => e
-    render json: { error: "An error occurred" }, status: :internal_server_error
+    render_json_response(e, :not_found, nil, nil)
   end
 
   private
@@ -69,8 +66,8 @@ class ProductsController < ApplicationController
 
   def save_product!
     @product.save!
-    render json: ProductSerializer.new(@product).serializable_hash, status: :created
+    render_json_response(nil, :created, ProductSerializer.new(@product).serializable_hash, nil)
   rescue StandardError => e
-    render json: { error: "An error occurred" }, status: :internal_server_error
+    render_json_response(e, :unprocessable_entity, nil, nil)
   end
 end

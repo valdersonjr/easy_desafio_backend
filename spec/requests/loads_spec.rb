@@ -24,7 +24,7 @@ RSpec.describe "Load", type: :request do
     it 'returns a list of loads' do
       create_list(:load, 10)
       get '/loads', headers: @auth_headers
-      expect(body_json(response)['loads'].count).to eq(10)
+      expect(body_json(response)['data'].count).to eq(10)
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe "Load", type: :request do
     it 'returns a load' do
       load = create(:load)
       get "/load/#{load.id}", headers: @auth_headers
-      expect(body_json(response)['id'].to_i).to eq(load.id)
+      expect(body_json(response)['data']['id'].to_i).to eq(load.id)
     end
   end
 
@@ -64,7 +64,7 @@ RSpec.describe "Load", type: :request do
 
       it 'returns a load' do
         post '/load/add', params: { load: attributes_for(:load) }, headers: @auth_headers
-        expect(body_json(response)['load']['id']).not_to be_nil
+        expect(body_json(response)['data']['id']).not_to be_nil
       end
     end
 
@@ -101,7 +101,7 @@ RSpec.describe "Load", type: :request do
       it 'returns a load' do
         load = create(:load)
         put "/load/edit/#{load.id}", params: { load: attributes_for(:load) }, headers: @auth_headers
-        expect(body_json(response)['id'].to_i).to eq(load.id)
+        expect(body_json(response)['data']['id'].to_i).to eq(load.id)
       end
     end
 

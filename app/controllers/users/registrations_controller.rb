@@ -1,9 +1,9 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
-  
+
   include RackSessionFix
-  
+
   respond_to :json
 
   def create
@@ -11,11 +11,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource.save
 
     if resource.persisted?
-        render json: { code: 200, message: 'Signed up successfully', data: resource }, status: :ok
+      render_json_response('Signed up successfully', :ok, resource)
 
     else
-      render json: { message: 'User could not be created successfully', errors: resource.errors.full_messages },
-             status: :unprocessable_entity
+      render_json_response(['User could not be created successfully']+resource.errors.full_messages, :unprocessable_entity)
     end
   end
 
@@ -25,36 +24,35 @@ class Users::RegistrationsController < Devise::RegistrationsController
         begin
           scoped_user = User.find(params[:id])
           update_user(scoped_user)
-        rescue
-          render json: { code: 422, message: 'User with this id was not found' }, status: :unprocessable_entity
+        rescue ActiveRecord::RecordNotFound => e
+          render_json_response(e, :unprocessable_entity)
         end
       else
         update_user(current_user)
       end
     elsif current_user.profile == "client"
       if params[:user][:profile].present? && !(params[:user][:profile] == "client" || params[:user][:profile] == 1)
-        render json: { message: 'Unauthorized', errors: ['Clients are not allowed to update the profile field.'] }, status: :unauthorized
+        render_json_response('Clients are not allowed to update the profile field.', :unauthorized)
       else
         update_user(current_user)
       end
     else
-      render json: { message: 'Unauthorized', errors: ['You do not have permission to update users.'] }, status: :unauthorized
+      render_json_response('You do not have permission to update users.', :unauthorized)
     end
   end
 
   def destroy
     resource.destroy
-    render json: { code: 200, message: 'User deleted successfully', data: resource }, status: :ok
+    render_json_response('User deleted successfully', :ok, resource)
   end
 
   private
 
   def update_user(user)
     if user.update(account_update_params)
-      render json: { code: 200, message: 'Updated successfully', data: user }, status: :ok
+      render_json_response('Updated successfully', :ok, user)
     else
-      render json: { message: 'User could not be updated', errors: user.errors.full_messages },
-             status: :unprocessable_entity
+      render_json_response(['User could not be updated']+user.errors.full_messages, :unprocessable_entity)
     end
   end
 
