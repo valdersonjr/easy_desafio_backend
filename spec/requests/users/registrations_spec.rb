@@ -127,13 +127,3 @@ RSpec.describe "Registrations", type: :request do
     end    
   end
 end
-
-# Talvez não seja certo chamar o endpoint de sign in aqui apenas para gerar o token
-# Deve ter como gerar o token de outra forma
-def set_auth_headers(user)
-  post '/user/sign_in', params: { user: { email: user.email, password: user.password } }
-  headers = response.headers
-  @auth_headers = {
-    'authorization' => headers['Authorization'],
-  }
-end
