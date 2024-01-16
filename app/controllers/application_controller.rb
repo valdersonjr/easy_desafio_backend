@@ -2,6 +2,13 @@ class ApplicationController < ActionController::API
 
   private
 
+  def require_admin
+    unless current_user.profile == 'admin'
+      render json: { message: 'You cant perform this action with a client profile' }, status: :forbidden
+      return
+    end
+  end
+
   def pagination_meta(collection)
     {
       current_page: collection.current_page,

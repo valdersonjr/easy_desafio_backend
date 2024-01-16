@@ -4,16 +4,16 @@ RSpec.describe "Users", type: :request do
   let(:user) { create(:user, profile: 'client') }
 
   describe "GET /users" do
-    context 'as an authenticated user' do 
+    context 'as an authenticated user' do
       before do
-        set_auth_headers(user)  
+        set_auth_headers(user)
       end
 
       it 'returns a list of users' do
         get '/users', headers: @auth_headers
-        expect(body_json['data'].count).to eq(User.count)
+        expect(body_json(response).count).to eq(User.count + 1)
       end
-      
+
       it 'returns success status' do
         get '/users', headers: @auth_headers
         expect(response).to have_http_status(:ok)

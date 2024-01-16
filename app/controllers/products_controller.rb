@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_admin, only: [:create, :update, :destroy]
 
   def index
     page = params[:page] || 1
@@ -28,22 +29,12 @@ class ProductsController < ApplicationController
   end
 
   def create
-    if current_user.profile != 'admin'
-      render json: { message: 'You are not allowed to create a product' }, status: :forbidden
-      return
-    end
-
     @product = Product.new
     @product.attributes = product_params
     save_product!
   end
 
   def update
-    if current_user.profile != 'admin'
-      render json: { message: 'You are not allowed to update a product' }, status: :forbidden
-      return
-    end
-
     @product = Product.find_by(id: params[:id])
 
     if @product
@@ -57,11 +48,6 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    if current_user.profile != 'admin'
-      render json: { message: 'You are not allowed to create a product' }, status: :forbidden
-      return
-    end
-
     @product = Product.find_by(id: params[:id])
 
     if @product

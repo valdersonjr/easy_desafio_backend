@@ -1,5 +1,6 @@
 class LoadsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_admin, only: [:create, :update, :destroy]
 
   def index
     page = params[:page] || 1
@@ -28,11 +29,6 @@ class LoadsController < ApplicationController
   end
 
   def create
-    if current_user.profile != 'admin'
-        render json: { message: 'You are not allowed to create a load' }, status: :forbidden
-        return
-    end
-
     @load = Load.new
     @load.attributes = load_params
     @load.delivery_date = parse_delivery_date(load_params[:delivery_date])
@@ -40,11 +36,6 @@ class LoadsController < ApplicationController
   end
 
   def update
-    if current_user.profile != 'admin'
-        render json: { message: 'You are not allowed to update a load' }, status: :forbidden
-        return
-    end
-
     @load = Load.find_by(id: params[:id])
 
     if @load
@@ -58,11 +49,6 @@ class LoadsController < ApplicationController
   end
 
   def destroy
-    if current_user.profile != 'admin'
-        render json: { message: 'You are not allowed to create a load' }, status: :forbidden
-        return
-    end
-
     @load = Load.find_by(id: params[:id])
 
     if @load
