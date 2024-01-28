@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   }
 
   devise_scope :user do
-    get '/validate_token' => 'users/sessions#validate_token', as: :validate_token
+    get '/validate_session' => 'users/sessions#validate_session', as: :validate_session
+    put '/users(/:id)' => 'users/registrations#update'
   end
 
   namespace :users do

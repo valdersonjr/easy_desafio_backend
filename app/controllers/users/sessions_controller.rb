@@ -1,15 +1,15 @@
 class Users::SessionsController < Devise::SessionsController
-  before_action :authenticate_user!, only: [:validate_token]
+  # before_action :authenticate_user!, only: [:validate_session]
 
   include RackSessionFix
   respond_to :json
 
 
-  def validate_token
+  def validate_session
     if current_user
-      render_json_response('Token is valid', :ok)
+      render_json_response('Session is valid', :ok)
     else
-      render_json_response('Invalid token', :unauthorized)
+      render_json_response('Invalid session', :unauthorized)
     end
   end
 
