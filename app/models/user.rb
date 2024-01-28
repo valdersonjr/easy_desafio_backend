@@ -12,4 +12,8 @@ class User < ApplicationRecord
   validates :profile, presence:true
 
   enum profile: { admin: 0, client: 1 }
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name email]
+  end
 end
