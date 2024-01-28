@@ -9,7 +9,7 @@ class LoadsController < ApplicationController
     @loads = Load.paginate(page: page, per_page: per_page)
 
     if @loads.any?
-      render_json_response(nil, :ok, LoadSerializer.new(@loads).serializable_hash, pagination_meta(@loads))
+      render_json_response(nil, :ok, @loads, pagination_meta(@loads))
     else
       render_json_response('There is no existing load', :not_found, nil, nil)
     end
@@ -19,7 +19,7 @@ class LoadsController < ApplicationController
     @load = Load.find_by(id: params[:id])
 
     if @load
-        render_json_response(nil, :ok, LoadSerializer.new(@load).serializable_hash, nil)
+        render_json_response(nil, :ok, @load, nil)
     else
         render_json_response('Load not found', :not_found, nil, nil)
     end
@@ -37,7 +37,7 @@ class LoadsController < ApplicationController
 
     if @load
         @load.update(load_params)
-        render_json_response(nil, :ok, LoadSerializer.new(@load).serializable_hash, nil)
+        render_json_response(nil, :ok, @load, nil)
     else
         render_json_response('Load not found', :not_found, nil, nil)
     end
@@ -65,7 +65,7 @@ class LoadsController < ApplicationController
 
   def save_load!
     @load.save!
-    render_json_response(nil, :created, LoadSerializer.new(@load).serializable_hash, nil)
+    render_json_response(nil, :created, @load, nil)
   rescue ActiveRecord::RecordInvalid => e
     render json: { error: e }, status: :unprocessable_entity
   end

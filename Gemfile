@@ -18,7 +18,6 @@ gem 'ransack'
 #Auth
 gem 'devise'
 gem 'devise-jwt'
-gem 'jsonapi-serializer'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]

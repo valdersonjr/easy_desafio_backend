@@ -9,7 +9,7 @@ class ProductsController < ApplicationController
     @products = Product.paginate(page: page, per_page: per_page)
 
     if @products.any?
-      render_json_response(nil, :ok, ProductSerializer.new(@products).serializable_hash, pagination_meta(@products))
+      render_json_response(nil, :ok, @products, pagination_meta(@products))
     else
       render_json_response('There is no existing product', :not_found, nil, nil)
     end
@@ -19,7 +19,7 @@ class ProductsController < ApplicationController
     @product = Product.find_by(id: params[:id])
 
     if @product
-      render_json_response(nil, :ok, ProductSerializer.new(@product).serializable_hash, nil)
+      render_json_response(nil, :ok, @product, nil)
     else
       render_json_response('Product not found', :not_found, nil, nil)
     end
@@ -36,7 +36,7 @@ class ProductsController < ApplicationController
 
     if @product
       @product.update(product_params)
-      render_json_response(nil, :ok, ProductSerializer.new(@product).serializable_hash, nil)
+      render_json_response(nil, :ok, @product, nil)
     else
       render_json_response('Product not found', :not_found, nil, nil)
     end
@@ -66,7 +66,7 @@ class ProductsController < ApplicationController
 
   def save_product!
     @product.save!
-    render_json_response(nil, :created, ProductSerializer.new(@product).serializable_hash, nil)
+    render_json_response(nil, :created, @product, nil)
   rescue StandardError => e
     render_json_response(e, :unprocessable_entity, nil, nil)
   end
