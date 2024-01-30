@@ -42,8 +42,23 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def destroy
-    resource.destroy
-    render_json_response('User deleted successfully', :ok, resource)
+
+    if params[:id].present?
+      begin
+        scoped_user = User.find(params[:id])
+        if(scoped_user)
+          scoped_user.destroy
+          render_json_response('User deleted successfully', :ok, scoped_user)
+        else
+          render_json_response('User not found', :not_found)
+        end
+      rescue ActiveRecord::RecordNotFound => e
+        render_json_response(e, :unprocessable_entity)
+      end
+    else
+      resource.destroy
+      render_json_response('User deleted successfully', :ok, resource)
+    end
   end
 
   private

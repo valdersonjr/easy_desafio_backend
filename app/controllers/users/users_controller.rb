@@ -17,7 +17,7 @@ class Users::UsersController < ApplicationController
 
     def show
         @user = User.find_by(id: params[:id])
-debugger
+
         if @user
             render_json_response(nil, :ok, @user)
         else

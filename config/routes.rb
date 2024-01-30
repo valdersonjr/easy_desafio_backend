@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   devise_scope :user do
     get '/validate_session' => 'users/sessions#validate_session', as: :validate_session
     put '/users(/:id)' => 'users/registrations#update'
+    delete '/users(/:id)' => 'users/registrations#destroy'
   end
 
   namespace :users do
