@@ -3,4 +3,8 @@ class Load < ApplicationRecord
 
   validates :code, presence: true, uniqueness: true
   validates :delivery_date, presence: true
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[code delivery_date]
+  end
 end
