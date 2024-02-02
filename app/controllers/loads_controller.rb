@@ -5,8 +5,11 @@ class LoadsController < ApplicationController
   def index
     page = params[:page] || 1
     per_page = params[:per_page] || 10
+
     @q = Load.ransack(params[:q])
-    @loads = @q.result(distinct: true).paginate(page: page, per_page: per_page)
+    @loads = @q.result(distinct: true)
+    @loads = @loads.order(params[:sort]) if params[:sort].present?
+    @loads = @loads.paginate(page: page, per_page: per_page)
 
     if @loads.any?
       render_json_response(nil, :ok, @loads, pagination_meta(@loads))

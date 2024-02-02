@@ -7,7 +7,9 @@ class ProductsController < ApplicationController
     per_page = params[:per_page] || 10
 
     @q = Product.ransack(params[:q])
-    @products = @q.result.paginate(page: page, per_page: per_page)
+    @products = @q.result
+    @products = @products.order(params[:sort]) if params[:sort].present?
+    @products = @products.paginate(page: page, per_page: per_page)
 
     if @products.any?
       render_json_response(nil, :ok, @products, pagination_meta(@products))

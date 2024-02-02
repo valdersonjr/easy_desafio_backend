@@ -6,14 +6,18 @@ class Users::UsersController < ApplicationController
         per_page = params[:per_page] || 10
 
         @q = User.ransack(params[:q])
-        @users = @q.result.paginate(page: page, per_page: per_page)
+        @users = @q.result
+
+        @users = @users.order(params[:sort]) if params[:sort].present?
+
+        @users = @users.paginate(page: page, per_page: per_page)
 
         if @users.any?
           render_json_response(nil, :ok, @users, pagination_meta(@users))
         else
           render_json_response('There is no existing user', :not_found)
         end
-      end
+    end
 
     def show
         @user = User.find_by(id: params[:id])
