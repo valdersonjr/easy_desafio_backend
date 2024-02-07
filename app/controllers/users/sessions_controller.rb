@@ -1,29 +1,28 @@
 class Users::SessionsController < Devise::SessionsController
-  # before_action :authenticate_user!, only: [:validate_session]
+  before_action :authenticate_user!, only: [:validate_session]
 
-  include RackSessionFix
-  respond_to :json
-
-
-  def validate_session
-    if current_user
-      render_json_response('Session is valid', :ok)
-    else
-      render_json_response('Invalid session', :unauthorized)
-    end
-  end
-
-  private
-
-  def respond_with(current_user, _opts = {})
-    render_json_response('Logged in successfully', :ok, current_user)
+  def create
+    self.resource = warden.authenticate!(auth_options)
+    sign_in(resource_name, resource)
+    @user = resource
+    @user.errors.any? ? (render 'create_error', status: :unauthorized) : (render 'create', status: :created)
   end
 
   def respond_to_on_destroy
     if current_user
-      render_json_response('Logged out successfully', :ok)
+      render 'respond_to_on_destroy', status: :ok
     else
-      render_json_response("Couldn't find an active session.", :unauthorized)
+      @error_message = 'Couldn\'t find an active session.'
+      render 'respond_to_on_destroy_error', status: :unprocessable_entity
+    end
+  end
+
+  def validate_session
+    if current_user
+      render 'validate_session', status: :ok
+    else
+      @error_message = 'Couldn\'t find an active session.'
+      render 'validate_session_error', status: :unprocessable_entity
     end
   end
 end
