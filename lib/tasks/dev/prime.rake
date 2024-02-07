@@ -6,21 +6,21 @@ namespace :dev do
   task :prime => :environment do
     puts 'Populating development database...'
 
-    1000.times do |i|
+    50.times do |i|
       Load.create(
         code: "LD#{rand(1000..9999)}",
         delivery_date: Date.today + (i + 1).weeks
       )
     end
 
-    1000.times do |i|
+    50.times do |i|
       Product.create(
         name: "Produto #{i + 1}",
         ballast: rand(1..99)
       )
     end
 
-    1000.times do
+    50.times do
       User.create(
         email: Faker::Internet.email,
         name: Faker::Name.name,

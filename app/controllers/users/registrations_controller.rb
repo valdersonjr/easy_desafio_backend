@@ -2,72 +2,83 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
 
-  include RackSessionFix
-
-  respond_to :json
-
   def create
     build_resource(sign_up_params)
     resource.save
+    @user = resource
 
-    if resource.persisted?
-      render_json_response('Signed up successfully', :ok, resource)
-
+    if @user.errors.any?
+      render 'create_error', status: :unprocessable_entity
     else
-      render_json_response(['User could not be created successfully']+resource.errors.full_messages, :unprocessable_entity)
+      render 'create', status: :created
     end
   end
 
   def update
-    if current_user.profile == "admin"
-      if params[:id]
-        begin
-          scoped_user = User.find(params[:id])
-          update_user(scoped_user)
-        rescue ActiveRecord::RecordNotFound => e
-          render_json_response(e, :unprocessable_entity)
-        end
+    if current_user && current_user.profile != "admin"
+      if params[:user][:profile].present? && current_user.profile != params[:user][:profile]
+        @error_message = 'You are not allowed to update the profile field.'
+        render 'update_error', status: :unauthorized
       else
-        update_user(current_user)
-      end
-    elsif current_user.profile == "client"
-      if params[:user][:profile].present? && !(params[:user][:profile] == "client" || params[:user][:profile] == 1)
-        render_json_response('Clients are not allowed to update the profile field.', :unauthorized)
-      else
-        update_user(current_user)
+        update_user?(current_user) ? (render 'update', status: :ok) : (render 'update_error', status: :unprocessable_entity)
       end
     else
-      render_json_response('You do not have permission to update users.', :unauthorized)
+      update_user?(current_user) ? (render 'update', status: :ok) : (render 'update_error', status: :unprocessable_entity)
+    end
+  end
+
+  def update_user_by_id
+    if current_user.profile != "admin"
+      @error_message = 'You do not have permission to update users.'
+      render 'update_user_by_id_error', status: :unauthorized
+    else
+      begin
+        scoped_user = User.find(params[:id])
+        update_user?(scoped_user) ? (render 'update_user_by_id', status: :ok) : (render 'update_user_by_id_error', status: :unprocessable_entity)
+      rescue ActiveRecord::RecordNotFound => error
+        @error_message = error
+        render 'update_user_by_id_error', status: :not_found
+      end
     end
   end
 
   def destroy
+    begin
+      resource.destroy
+      render 'destroy', status: :ok
+    rescue StandardError => error
+      render 'destroy_error', status: :unprocessable_entity
+    end
+  end
 
-    if params[:id].present?
+  def destroy_user_by_id
+    if current_user.profile != "admin"
+      @error_message = 'You do not have permission to delete users.'
+      render 'destroy_user_by_id_error', status: :unauthorized
+    else
       begin
         scoped_user = User.find(params[:id])
         if(scoped_user)
+          @id = scoped_user.id
           scoped_user.destroy
-          render_json_response('User deleted successfully', :ok, scoped_user)
-        else
-          render_json_response('User not found', :not_found)
+          render 'destroy_user_by_id', status: :ok
         end
-      rescue ActiveRecord::RecordNotFound => e
-        render_json_response(e, :unprocessable_entity)
+      rescue ActiveRecord::RecordNotFound => error
+        @error_message = error
+        render 'destroy_user_by_id_error', status: :not_found
       end
-    else
-      resource.destroy
-      render_json_response('User deleted successfully', :ok, resource)
     end
   end
 
   private
 
-  def update_user(user)
+  def update_user?(user)
     if user.update(account_update_params)
-      render_json_response('Updated successfully', :ok, user)
+      @user = user
+      return true
     else
-      render_json_response(['User could not be updated']+user.errors.full_messages, :unprocessable_entity)
+      @error_message = user.errors.full_messages
+      return false
     end
   end
 
