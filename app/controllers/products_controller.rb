@@ -6,58 +6,84 @@ class ProductsController < ApplicationController
     page = params[:page] || 1
     per_page = params[:per_page] || 10
 
+   begin
     @q = Product.ransack(params[:q])
     @products = @q.result
     @products = @products.order(params[:sort]) if params[:sort].present?
     @products = @products.paginate(page: page, per_page: per_page)
 
     if @products.any?
-      render_json_response(nil, :ok, @products, pagination_meta(@products))
+      pagination_meta(@products)
+      render 'index', status: :ok
     else
-      render_json_response('There is no existing product', :not_found, nil, nil)
+      @error_message = 'There is no data to display.'
+      render 'index_error', status: :not_found
     end
+   rescue ActiveRecord::RecordNotFound => error
+    @error_message = error
+    render 'index_error', status: :not_found
+   end
   end
 
   def show
-    @product = Product.find_by(id: params[:id])
-
-    if @product
-      render_json_response(nil, :ok, @product, nil)
-    else
-      render_json_response('Product not found', :not_found, nil, nil)
+    begin
+      @product = Product.find_by(id: params[:id])
+      if @product
+        render 'show', status: :ok
+      else
+        @error_message = 'Product not found'
+        render 'show_error', status: :not_found
+      end
+    rescue ActiveRecord::RecordNotFound => error
+      @error_message = error
+      render 'show_error', status: :not_found
     end
   end
 
   def create
     @product = Product.new
     @product.attributes = product_params
-    save_product!
+
+    begin
+      @product.save!
+      render 'create', status: :created
+    rescue ActiveRecord::RecordInvalid => error
+      @error_message = error
+      render 'create_error', status: :unprocessable_entity
+    end
   end
 
   def update
-    @product = Product.find_by(id: params[:id])
+    begin
+      @product = Product.find_by(id: params[:id])
 
-    if @product
-      @product.update(product_params)
-      render_json_response(nil, :ok, @product, nil)
-    else
-      render_json_response('Product not found', :not_found, nil, nil)
+      if @product
+        @product.update!(product_params)
+        render 'update', status: :ok
+      else
+        @error_message = 'Product not found'
+        render 'update_error', status: :not_found
+      end
+      rescue ActiveRecord::RecordNotFound => error
+        @error_message = error
+        render 'update_error', status: :not_found
     end
-  rescue StandardError => e
-    render_json_response(e, :not_found, nil, nil)
   end
 
   def destroy
-    @product = Product.find_by(id: params[:id])
-
-    if @product
-      @product.destroy
-      render_json_response('Product successfully deleted', :ok, nil, nil)
-    else
-      render_json_response('Product not found', :not_found, nil, nil)
+    begin
+      @product = Product.find_by(id: params[:id])
+      if @product
+        @product.destroy
+        render 'destroy', status: :ok
+      else
+        @error_message = 'Product not found'
+        render 'destroy_error', status: :not_found
+      end
+    rescue ActiveRecord::RecordNotFound => error
+      @error_message = error
+      render 'destroy_error', status: :not_found
     end
-  rescue StandardError => e
-    render_json_response(e, :not_found, nil, nil)
   end
 
   private
@@ -65,12 +91,5 @@ class ProductsController < ApplicationController
   def product_params
     return {} unless params.has_key?(:product)
     params.require(:product).permit(:name, :ballast)
-  end
-
-  def save_product!
-    @product.save!
-    render_json_response(nil, :created, @product, nil)
-  rescue StandardError => e
-    render_json_response(e, :unprocessable_entity, nil, nil)
   end
 end

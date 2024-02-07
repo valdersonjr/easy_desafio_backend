@@ -1,6 +1,6 @@
 class LoadsController < ApplicationController
-  # before_action :authenticate_user!
-  # before_action :require_admin, only: [:create, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :require_admin, only: [:create, :update, :destroy]
 
   def index
     page = params[:page] || 1
@@ -41,9 +41,10 @@ class LoadsController < ApplicationController
   end
 
   def create
+    @load = Load.new
+    @load.attributes = load_params
+
     begin
-      @load = Load.new
-      @load.attributes = load_params
       @load.save!
       render 'create', status: :created
     rescue ActiveRecord::RecordInvalid => error
