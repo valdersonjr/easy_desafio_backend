@@ -19,7 +19,7 @@ class ApplicationController < ActionController::API
   end
 
   def pagination_meta(collection)
-    {
+    @pagination_meta = {
       current_page: collection.current_page,
       per_page: collection.per_page,
       total_entries: collection.total_entries,
