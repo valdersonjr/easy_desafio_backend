@@ -1,13 +1,13 @@
 class CountsController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
 
   def index
-    counts = {
+    @counts = {
       loads: Load.count,
       users: User.count,
       products: Product.count
     }
 
-    render_json_response(nil, :ok, counts)
+    render 'index', status: :ok
   end
 end
