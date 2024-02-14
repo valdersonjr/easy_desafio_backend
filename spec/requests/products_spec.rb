@@ -5,7 +5,7 @@ RSpec.describe "Products", type: :request do
   let(:admin_user) { create(:user, profile: 'admin') }
   let(:product) { create(:product) }
 
-  describe "GET /products" do
+  describe "GET /productss" do
     before do
       set_auth_headers(user)
     end
@@ -24,47 +24,47 @@ RSpec.describe "Products", type: :request do
     it 'returns a list of products' do
       create_list(:product, 10)
       get '/products', headers: @auth_headers
-      expect(body_json(response)['data'].count).to eq(10)
+      expect(body_json(response)['products'].count).to eq(10)
     end
   end
 
-  describe "GET /product/:id" do
+  describe "GET /products/:id" do
     before do
       set_auth_headers(user)
     end
 
     it 'returns http success' do
       product = create(:product)
-      get "/product/#{product.id}", headers: @auth_headers
+      get "/products/#{product.id}", headers: @auth_headers
       expect(response).to have_http_status(:ok)
     end
 
     it 'returns not found status' do
-      get '/product/0', headers: @auth_headers
+      get '/products/0', headers: @auth_headers
       expect(response).to have_http_status(:not_found)
     end
 
     it 'returns a product' do
       product = create(:product)
-      get "/product/#{product.id}", headers: @auth_headers
-      expect(body_json(response)['data']['id'].to_i).to eq(product.id)
+      get "/products/#{product.id}", headers: @auth_headers
+      expect(body_json(response)['product']['id'].to_i).to eq(product.id)
     end
   end
 
-  describe "POST /product/add" do
+  describe "POST /products" do
     context 'with admin user' do
       before do
         set_auth_headers(admin_user)
       end
 
       it 'returns http success' do
-        post '/product/add', params: { product: attributes_for(:product) }, headers: @auth_headers
+        post '/products', params: { product: attributes_for(:product) }, headers: @auth_headers
         expect(response).to have_http_status(:created)
       end
 
       it 'returns a product' do
-        post '/product/add', params: { product: attributes_for(:product) }, headers: @auth_headers
-        expect(body_json(response)['data']['id'].to_i).to eq(Product.last.id)
+        post '/products', params: { product: attributes_for(:product) }, headers: @auth_headers
+        expect(body_json(response)['message']).to eq('Product created successfully')
       end
     end
 
@@ -74,13 +74,13 @@ RSpec.describe "Products", type: :request do
       end
 
       it 'returns forbidden status' do
-        post '/product/add', params: { product: attributes_for(:product) }, headers: @auth_headers
+        post '/products', params: { product: attributes_for(:product) }, headers: @auth_headers
         expect(response).to have_http_status(:forbidden)
       end
     end
   end
 
-  describe "PUT /product/edit/:id" do
+  describe "PUT /products/:id" do
     context 'with admin user' do
       before do
         set_auth_headers(admin_user)
@@ -88,14 +88,14 @@ RSpec.describe "Products", type: :request do
 
       it 'returns http success' do
         product = create(:product)
-        put "/product/edit/#{product.id}", params: { product: attributes_for(:product) }, headers: @auth_headers
+        put "/products/#{product.id}", params: { product: attributes_for(:product) }, headers: @auth_headers
         expect(response).to have_http_status(:ok)
       end
 
       it 'returns a product' do
         product = create(:product)
-        put "/product/edit/#{product.id}", params: { product: attributes_for(:product) }, headers: @auth_headers
-        expect(body_json(response)['data']['id'].to_i).to eq(product.id)
+        put "/products/#{product.id}", params: { product: attributes_for(:product) }, headers: @auth_headers
+        expect(body_json(response)['message']).to eq('Product updated successfully')
       end
     end
 
@@ -106,13 +106,13 @@ RSpec.describe "Products", type: :request do
 
       it 'returns forbidden status' do
         product = create(:product)
-        put "/product/edit/#{product.id}", params: { product: attributes_for(:product) }, headers: @auth_headers
+        put "/products/#{product.id}", params: { product: attributes_for(:product) }, headers: @auth_headers
         expect(response).to have_http_status(:forbidden)
       end
     end
   end
 
-  describe "DELETE /product/delete/:id" do
+  describe "DELETE /products/:id" do
     context 'with admin user' do
       before do
         set_auth_headers(admin_user)
@@ -120,14 +120,14 @@ RSpec.describe "Products", type: :request do
 
       it 'returns http success' do
         product = create(:product)
-        delete "/product/delete/#{product.id}", headers: @auth_headers
+        delete "/products/#{product.id}", headers: @auth_headers
         expect(response).to have_http_status(:ok)
       end
 
       it 'returns a message' do
         product = create(:product)
-        delete "/product/delete/#{product.id}", headers: @auth_headers
-        expect(body_json(response)['message']).to eq('Product successfully deleted')
+        delete "/products/#{product.id}", headers: @auth_headers
+        expect(body_json(response)['message']).to eq('Product deleted successfully')
       end
     end
 
@@ -138,7 +138,7 @@ RSpec.describe "Products", type: :request do
 
       it 'returns forbidden status' do
         product = create(:product)
-        delete "/product/delete/#{product.id}", headers: @auth_headers
+        delete "/products/#{product.id}", headers: @auth_headers
         expect(response).to have_http_status(:forbidden)
       end
     end

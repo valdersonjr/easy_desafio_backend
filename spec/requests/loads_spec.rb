@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Load", type: :request do
   let(:user) { create(:user, profile: 'client') }
   let(:admin_user) { create(:user, profile: 'admin') }
-  let(:load) { create(:load, delivery_date: '09/04/99') }
+  let(:load) { create(:load) }
 
   describe 'GET /loads' do
     before do
@@ -24,47 +24,47 @@ RSpec.describe "Load", type: :request do
     it 'returns a list of loads' do
       create_list(:load, 10)
       get '/loads', headers: @auth_headers
-      expect(body_json(response)['data'].count).to eq(10)
+      expect(body_json(response)['loads'].count).to eq(10)
     end
   end
 
-  describe 'GET /load/:id' do
+  describe 'GET /loads/:id' do
     before do
       set_auth_headers(user)
     end
 
     it 'returns http success' do
       load = create(:load)
-      get "/load/#{load.id}", headers: @auth_headers
+      get "/loads/#{load.id}", headers: @auth_headers
       expect(response).to have_http_status(:ok)
     end
 
     it 'returns not found status' do
-      get '/load/0', headers: @auth_headers
+      get '/loads/0', headers: @auth_headers
       expect(response).to have_http_status(:not_found)
     end
 
     it 'returns a load' do
       load = create(:load)
-      get "/load/#{load.id}", headers: @auth_headers
-      expect(body_json(response)['data']['id'].to_i).to eq(load.id)
+      get "/loads/#{load.id}", headers: @auth_headers
+      expect(body_json(response)['load']['id'].to_i).to eq(load.id)
     end
   end
 
-  describe 'POST /load/add' do
+  describe 'POST /loads' do
     context 'with admin user' do
       before do
         set_auth_headers(admin_user)
       end
 
       it 'returns http created' do
-        post '/load/add', params: { load: attributes_for(:load) }, headers: @auth_headers
+        post '/loads', params: { load: attributes_for(:load) }, headers: @auth_headers
         expect(response).to have_http_status(:created)
       end
 
       it 'returns a load' do
-        post '/load/add', params: { load: attributes_for(:load) }, headers: @auth_headers
-        expect(body_json(response)['data']['id']).not_to be_nil
+        post '/loads', params: { load: attributes_for(:load) }, headers: @auth_headers
+        expect(body_json(response)['message']).to eq('Load created successfully')
       end
     end
 
@@ -75,13 +75,13 @@ RSpec.describe "Load", type: :request do
 
       it 'returns forbidden status' do
         load = build(:load)
-        post '/load/add', params: load.as_json, headers: @auth_headers
+        post '/loads', params: load.as_json, headers: @auth_headers
         expect(response).to have_http_status(:forbidden)
       end
     end
   end
 
-  describe 'PUT /load/:id' do
+  describe 'PUT /loads/:id' do
     context 'with admin user' do
       before do
         set_auth_headers(admin_user)
@@ -89,19 +89,19 @@ RSpec.describe "Load", type: :request do
 
       it 'returns http success' do
         load = create(:load)
-        put "/load/edit/#{load.id}", params: { load: attributes_for(:load) }, headers: @auth_headers
+        put "/loads/#{load.id}", params: { load: attributes_for(:load) }, headers: @auth_headers
         expect(response).to have_http_status(:ok)
       end
 
       it 'returns not found status' do
-        put '/load/edit/0', params: { load: attributes_for(:load) }, headers: @auth_headers
+        put '/loads/0', params: { load: attributes_for(:load) }, headers: @auth_headers
         expect(response).to have_http_status(:not_found)
       end
 
       it 'returns a load' do
         load = create(:load)
-        put "/load/edit/#{load.id}", params: { load: attributes_for(:load) }, headers: @auth_headers
-        expect(body_json(response)['data']['id'].to_i).to eq(load.id)
+        put "/loads/#{load.id}", params: { load: attributes_for(:load) }, headers: @auth_headers
+        expect(body_json(response)['message']).to eq('Load updated successfully')
       end
     end
 
@@ -112,13 +112,13 @@ RSpec.describe "Load", type: :request do
 
       it 'returns forbidden status' do
         load = create(:load)
-        put "/load/edit/#{load.id}", params: { load: attributes_for(:load) }, headers: @auth_headers
+        put "/loads/#{load.id}", params: { load: attributes_for(:load) }, headers: @auth_headers
         expect(response).to have_http_status(:forbidden)
       end
     end
   end
 
-  describe 'DELETE /load/:id' do
+  describe 'DELETE /loads/:id' do
     context 'with admin user' do
       before do
         set_auth_headers(admin_user)
@@ -126,12 +126,12 @@ RSpec.describe "Load", type: :request do
 
       it 'returns http success' do
         load = create(:load)
-        delete "/load/delete/#{load.id}", headers: @auth_headers
+        delete "/loads/#{load.id}", headers: @auth_headers
         expect(response).to have_http_status(:ok)
       end
 
       it 'returns not found status' do
-        delete '/load/delete/0', headers: @auth_headers
+        delete '/loads/0', headers: @auth_headers
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -143,7 +143,7 @@ RSpec.describe "Load", type: :request do
 
       it 'returns forbidden status' do
         load = create(:load)
-        delete "/load/delete/#{load.id}", headers: @auth_headers
+        delete "/loads/#{load.id}", headers: @auth_headers
         expect(response).to have_http_status(:forbidden)
       end
     end

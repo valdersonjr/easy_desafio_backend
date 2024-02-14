@@ -1,10 +1,10 @@
 FactoryBot.define do
   sequence :unique_load_code do |n|
-    "load_code_#{n}"
+    "LD#{n}"
   end
 
   factory :load do
     code { generate(:unique_load_code) }
-    delivery_date { "09/04/99" }
+    delivery_date { Faker::Date.between(from: 2.years.ago, to: 2.years.from_now) }
   end
 end
