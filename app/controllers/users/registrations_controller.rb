@@ -1,6 +1,6 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   before_action :configure_sign_up_params, only: [:create]
-  before_action :configure_account_update_params, only: [:update]
+  before_action :configure_account_update_params, only: [:update, :update_user_by_id]
 
   def create
     build_resource(sign_up_params)
