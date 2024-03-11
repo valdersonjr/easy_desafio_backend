@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_11_192153) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_11_192902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -27,6 +27,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_192153) do
     t.string "bay", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "load_id", null: false
+    t.index ["load_id"], name: "index_orders_on_load_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -53,4 +55,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_192153) do
     t.check_constraint "profile = ANY (ARRAY[0, 1])", name: "profile_constraint"
   end
 
+  add_foreign_key "orders", "loads"
 end
