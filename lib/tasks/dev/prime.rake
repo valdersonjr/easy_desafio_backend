@@ -22,16 +22,22 @@ namespace :dev do
       )
     end
 
-    # 1000.times do
-    #   User.create(
-    #     email: Faker::Internet.email,
-    #     name: Faker::Name.name,
-    #     password: "123123",
-    #     password_confirmation: "123123",
-    #     profile: [0, 1].sample
-    #   )
-    # end
+    50.times do |i|
+      Order.create(
+        code: "OR#{rand(1000..9999)}",
+        bay: "BAY#{rand(1..10)}",
+        load_id: Load.all.sample.id
+        )
+    end
 
+    50.times do |i|
+      OrderProduct.create(
+        order_id: Order.all.sample.id,
+        product_id: Product.all.sample.id,
+        quantity: rand(1..99),
+        box: [true, false].sample
+      )
+    end
 
     50.times do |i|
       User.create(
