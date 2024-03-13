@@ -20,5 +20,6 @@ Rails.application.routes.draw do
     resources :loads
     resources :counts, only: [:index]
     resources :orders
+    resources :order_products
   end
 end
