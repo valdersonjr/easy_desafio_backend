@@ -22,6 +22,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_194318) do
     t.index ["code"], name: "index_loads_on_code", unique: true
   end
 
+  create_table "order_products", id: false, force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_id", null: false
+    t.string "quantity", limit: 255, null: false
+    t.boolean "box", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id", "product_id"], name: "index_order_products_on_order_id_and_product_id", unique: true
+    t.index ["order_id"], name: "index_order_products_on_order_id"
+    t.index ["product_id"], name: "index_order_products_on_product_id"
+  end
+
   create_table "orders", force: :cascade do |t|
     t.string "code", limit: 255, null: false
     t.string "bay", limit: 255, null: false
@@ -29,18 +41,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_194318) do
     t.datetime "updated_at", null: false
     t.bigint "load_id", null: false
     t.index ["load_id"], name: "index_orders_on_load_id"
-  end
-
-  create_table "orders_products", id: false, force: :cascade do |t|
-    t.bigint "order_id", null: false
-    t.bigint "product_id", null: false
-    t.string "quantity", limit: 255, null: false
-    t.boolean "box", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["order_id", "product_id"], name: "index_orders_products_on_order_id_and_product_id", unique: true
-    t.index ["order_id"], name: "index_orders_products_on_order_id"
-    t.index ["product_id"], name: "index_orders_products_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -67,7 +67,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_11_194318) do
     t.check_constraint "profile = ANY (ARRAY[0, 1])", name: "profile_constraint"
   end
 
+  add_foreign_key "order_products", "orders"
+  add_foreign_key "order_products", "products"
   add_foreign_key "orders", "loads"
-  add_foreign_key "orders_products", "orders"
-  add_foreign_key "orders_products", "products"
 end
