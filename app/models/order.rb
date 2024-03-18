@@ -7,6 +7,6 @@ class Order < ApplicationRecord
   has_many :order_products
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[code bay load_id]
+    %w[code bay load_id created_at]
   end
 end

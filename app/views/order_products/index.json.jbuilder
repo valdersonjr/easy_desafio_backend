@@ -1,4 +1,4 @@
-json.orders @order_products.includes(:product, :order) do |order_product|
+json.orderProducts @order_products.includes(:product, :order) do |order_product|
   json.id order_product.id
   json.quantity order_product.quantity
   json.box order_product.box

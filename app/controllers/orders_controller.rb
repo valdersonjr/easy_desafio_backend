@@ -6,6 +6,10 @@ class OrdersController < ApplicationController
     page = params[:page] || 1
     per_page = params[:per_page] || 10
 
+    if params[:q] && params[:q][:load_id_eq].present?
+      params[:q][:load_id_eq] = params[:q][:load_id_eq].to_i
+    end
+
     begin
       @q = Order.ransack(params[:q])
       @orders = @q.result

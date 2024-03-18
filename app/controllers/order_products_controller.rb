@@ -1,8 +1,18 @@
 class OrderProductsController < ApplicationController
+  before_action :authenticate_user!
+  before_action :require_admin, only: [:create, :update, :destroy]
 
   def index
     page = params[:page] || 1
     per_page = params[:per_page] || 10
+
+    if params[:q] && params[:q][:order_id_eq].present?
+      params[:q][:order_id_eq] = params[:q][:order_id_eq].to_i
+    end
+
+    if params[:q] && params[:q][:product_id_eq].present?
+      params[:q][:product_id_eq] = params[:q][:product_id_eq].to_i
+    end
 
     begin
       @q = OrderProduct.ransack(params[:q])
@@ -15,7 +25,7 @@ class OrderProductsController < ApplicationController
         render 'index', status: :ok
       else
         @error_message = 'There is no data to display.'
-        render 'index_error', status: :not_found
+        render 'index_error', status: :no_content
       end
     rescue ActiveRecord::RecordNotFound => error
       @error_message = error
