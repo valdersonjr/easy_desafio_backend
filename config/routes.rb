@@ -17,9 +17,14 @@ Rails.application.routes.draw do
     end
 
     resources :products
+    get 'products/not_added_to_order/:order_id', to: 'products#list_products_not_added_to_given_order_id'
+
     resources :loads
     resources :counts, only: [:index]
-    resources :orders
+
+    resources :orders, only: [:index, :show, :create, :update, :destroy]
+    get 'orders/load/:load_code', to: 'orders#show_order_by_load_code'
+
     resources :order_products
   end
 end

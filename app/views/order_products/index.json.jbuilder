@@ -16,3 +16,6 @@ json.orderProducts @order_products.includes(:product, :order) do |order_product|
     json.load_id @order.load_id
   end
 end
+
+
+json.pagination_meta @pagination_meta

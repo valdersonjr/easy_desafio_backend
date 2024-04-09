@@ -8,4 +8,8 @@ class OrderProduct < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     %w[order_id product_id quantity box]
   end
+
+  def self.ransackable_associations(auth_object = nil)
+    ["order", "product"]
+  end
 end

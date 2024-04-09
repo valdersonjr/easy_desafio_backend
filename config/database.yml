@@ -9,6 +9,7 @@ development:
   username: easy_desafio_backend
   password: 'sorvete123'
   host: localhost
+  timezone: 'Brasilia'
 
 test:
   <<: *default
@@ -16,6 +17,7 @@ test:
   username: easy_desafio_backend
   password: 'sorvete123'
   host: localhost
+  timezone: 'Brasilia'
 
 # production:
 #   <<: *default

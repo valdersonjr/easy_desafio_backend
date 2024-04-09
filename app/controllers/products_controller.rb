@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :require_admin, only: [:create, :update, :destroy]
+  # before_action :authenticate_user!
+  # before_action :require_admin, only: [:create, :update, :destroy]
 
   def index
     page = params[:page] || 1
@@ -8,7 +8,7 @@ class ProductsController < ApplicationController
 
    begin
     @q = Product.ransack(params[:q])
-    @products = @q.result
+    @products = @q.result(distinct: true)
     @products = @products.order(params[:sort]) if params[:sort].present?
     @products = @products.paginate(page: page, per_page: per_page)
 
@@ -23,6 +23,35 @@ class ProductsController < ApplicationController
     @error_message = error
     render 'index_error', status: :not_found
    end
+  end
+
+  def list_products_not_added_to_given_order_id
+    page = params[:page] || 1
+    per_page = params[:per_page] || 10
+
+    begin
+      order_id = params[:order_id]
+      raise ActiveRecord::RecordInvalid.new("Order ID is required") if order_id.blank?
+
+      @q = Product.ransack(params[:q])
+      @products = @q.result(distinct: true)
+
+      order = Order.find(order_id)
+      order_product_ids = order.order_products.pluck(:product_id)
+      @products = @products.where.not(id: order_product_ids)
+      @products = @products.order(params[:sort]) if params[:sort].present?
+
+      @products = @products.paginate(page: page, per_page: per_page)
+
+      pagination_meta(@products)
+      render 'index', status: :ok
+    rescue ActiveRecord::RecordNotFound => error
+      @error_message = "Order not found"
+      render 'index_error', status: :not_found
+    rescue ActiveRecord::RecordInvalid => error
+      @error_message = error.message
+      render 'index_error', status: :unprocessable_entity
+    end
   end
 
   def show

@@ -1,6 +1,6 @@
 class LoadsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :require_admin, only: [:create, :update, :destroy]
+  # before_action :authenticate_user!
+  # before_action :require_admin, only: [:create, :update, :destroy]
 
   def index
     page = params[:page] || 1

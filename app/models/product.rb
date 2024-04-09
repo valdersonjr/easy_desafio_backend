@@ -9,4 +9,8 @@ class Product < ApplicationRecord
     def self.ransackable_attributes(auth_object = nil)
         %w[name ballast]
     end
+
+    def self.ransackable_associations(auth_object = nil)
+        ["order_products"]
+    end
 end
