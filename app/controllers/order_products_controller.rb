@@ -41,6 +41,8 @@ class OrderProductsController < ApplicationController
 
     begin
       @order_product.save!
+      handle_order_product_interaction
+
       render 'create', status: :created
     rescue ActiveRecord::RecordInvalid => error
       @error_message = error
@@ -53,6 +55,8 @@ class OrderProductsController < ApplicationController
 
     begin
       @order_product.update!(order_product_params)
+      handle_order_product_interaction
+
       render 'update', status: :ok
     rescue ActiveRecord::RecordInvalid => error
       @error_message = error
@@ -64,6 +68,7 @@ class OrderProductsController < ApplicationController
     begin
       @order_product = OrderProduct.find(params[:id])
       @order_product.destroy!
+      handle_order_product_interaction
       render 'destroy', status: :ok
     rescue ActiveRecord::RecordNotFound => error
       @error_message = error
@@ -75,5 +80,11 @@ class OrderProductsController < ApplicationController
 
   def order_product_params
     params.require(:order_product).permit(:order_id, :product_id, :quantity, :box)
+  end
+
+  def handle_order_product_interaction
+    @order = Order.find(@order_product.order_id)
+    @order.update(sorted: false)
+    SortedOrderProduct.where(order_id: @order_product.order_id).destroy_all
   end
 end

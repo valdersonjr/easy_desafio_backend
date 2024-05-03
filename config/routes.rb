@@ -19,12 +19,15 @@ Rails.application.routes.draw do
     resources :products
     get 'products/not_added_to_order/:order_id', to: 'products#list_products_not_added_to_given_order_id'
 
-    resources :loads
+    resources :loads, only: [:index, :show, :create, :update, :destroy]
+    get 'loads/load/:code', to: 'loads#show_load_by_load_code'
+
     resources :counts, only: [:index]
 
-    resources :orders, only: [:index, :show, :create, :update, :destroy]
-    get 'orders/load/:load_code', to: 'orders#show_order_by_load_code'
-
+    resources :orders
     resources :order_products
+    resources :sorted_order_products
+
+    post 'palletizer', to: 'palletizer#run_palletizer'
   end
 end

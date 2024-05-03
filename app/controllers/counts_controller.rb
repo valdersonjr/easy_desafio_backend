@@ -3,7 +3,7 @@ class CountsController < ApplicationController
 
   def index
     @loads = Load.count
-    @orders = Order.count
+    # @orders = Order.count
     @products = Product.count
     @users = User.count
     @pallets = Order.joins(:order_products).distinct.count

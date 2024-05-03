@@ -40,6 +40,22 @@ class LoadsController < ApplicationController
     end
   end
 
+  def show_load_by_load_code
+    puts "AQUIIIIIIIII", params[:code]
+    begin
+      @load = Load.find_by(code: params[:code])
+      if @load
+        render 'show', status: :ok
+      else
+        @error_message = 'Load not found'
+        render 'show_error', status: :not_found
+      end
+    rescue ActiveRecord::RecordNotFound => error
+      @error_message = error
+      render 'show_error', status: :not_found
+    end
+  end
+
   def create
     @load = Load.new
     @load.attributes = load_params

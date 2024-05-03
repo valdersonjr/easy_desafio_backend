@@ -46,27 +46,28 @@ class OrdersController < ApplicationController
     end
   end
 
-  def show_order_by_load_code
-    begin
-      @load_id = find_load_by_code(params[:load_code])
-      if(@load_id.nil?)
-        @error_message = 'Load not found'
-        render 'show_error', status: :not_found
-        return
-      end
+  # def show_order_by_load_code
+  #   begin
+  #     @load_id = find_load_by_code(params[:load_code])
 
-      @order = Order.find_by(load_id: @load_id)
-      if @order
-        render 'show', status: :ok
-      else
-        @error_message = 'Order not found'
-        render 'show_error', status: :not_found
-      end
-    rescue ActiveRecord::RecordNotFound => error
-      @error_message = error
-      render 'show_error', status: :not_found
-    end
-  end
+  #     if(@load_id.nil?)
+  #       @error_message = 'Load not found'
+  #       render 'show_error', status: :ok
+  #       return
+  #     end
+
+  #     @order = Order.find_by(load_id: @load_id)
+  #     if @order
+  #       render 'show', status: :ok
+  #     else
+  #       @error_message = 'Order not found'
+  #       render 'show_error', status: :ok
+  #     end
+  #   rescue ActiveRecord::RecordNotFound => error
+  #     @error_message = error
+  #     render 'show_error', status: :not_found
+  #   end
+  # end
 
   def create
     @load_id = find_load_by_code(params[:order][:load_code])

@@ -59,6 +59,8 @@ GEM
       activemodel (= 7.1.2)
       activesupport (= 7.1.2)
       timeout (>= 0.4.0)
+    activerecord-import (1.6.0)
+      activerecord (>= 4.2)
     activestorage (7.1.2)
       actionpack (= 7.1.2)
       activejob (= 7.1.2)
@@ -217,6 +219,8 @@ GEM
       i18n
     rdoc (6.6.2)
       psych (>= 4.0.0)
+    redis-client (0.22.1)
+      connection_pool
     reline (0.4.2)
       io-console (~> 0.5)
     responders (3.1.1)
@@ -242,6 +246,11 @@ GEM
     ruby2_keywords (0.0.5)
     shoulda-matchers (6.0.0)
       activesupport (>= 5.2.0)
+    sidekiq (7.2.4)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.19.0)
     stringio (3.1.0)
     thor (1.3.0)
     timeout (0.4.1)
@@ -270,6 +279,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord-import
   bootsnap
   debug
   devise
@@ -284,6 +294,7 @@ DEPENDENCIES
   ransack
   rspec-rails
   shoulda-matchers
+  sidekiq
   tzinfo-data
   will_paginate
 
