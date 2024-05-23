@@ -8,35 +8,35 @@ namespace :dev do
 
     start_time = Time.now
 
-    5.times do |i|
-      Load.create(
-        code: "LD#{rand(1000..9999)}",
-        delivery_date: Date.today + (i + 1).weeks
-      )
-    end
+    # 5.times do |i|
+    #   Load.create(
+    #     code: "LD#{rand(1000..9999)}",
+    #     delivery_date: Date.today + (i + 1).weeks
+    #   )
+    # end
 
-    5.times do |i|
-      Order.create(
-        code: "OR#{rand(1000..9999)}",
-        bay: "BAY#{rand(10..99)}",
-        sorted: false,
-        load_id: Load.all.sample.id
-        )
-    end
+    # 5.times do |i|
+    #   Order.create(
+    #     code: "OR#{rand(1000..9999)}",
+    #     bay: "BAY#{rand(10..99)}",
+    #     sorted: false,
+    #     load_id: Load.all.sample.id
+    #     )
+    # end
 
-    50.times do |i|
-      order_id = Order.first.id
-      product_id = Product.all.sample.id
+    # 50.times do |i|
+    #   order_id = Order.first.id
+    #   product_id = Product.all.sample.id
 
-      next if OrderProduct.where(order_id: order_id).count >= 4
+    #   next if OrderProduct.where(order_id: order_id).count >= 4
 
-      OrderProduct.create(
-        order_id: order_id,
-        product_id: product_id,
-        quantity: rand(10..99),
-        box: [true, false].sample
-      )
-    end
+    #   OrderProduct.create(
+    #     order_id: order_id,
+    #     product_id: product_id,
+    #     quantity: rand(10..99),
+    #     box: [true, false].sample
+    #   )
+    # end
 
     # 25.times do |i|
     #   star_wars_name = Faker::Movies::StarWars.unique.character

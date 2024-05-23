@@ -13,7 +13,8 @@ gem 'ransack'
 gem 'jbuilder'
 gem 'activerecord-import'
 gem 'sidekiq'
-
+gem 'redis'
+gem 'redis-client'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
