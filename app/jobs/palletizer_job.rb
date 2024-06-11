@@ -1,7 +1,7 @@
 require_relative '../helpers/palletizer_helper'
 
 class PalletizerJob < ApplicationJob
-    include Palletizer
+    include PalletizerHelper
     queue_as :default
   
     def perform(load_code)

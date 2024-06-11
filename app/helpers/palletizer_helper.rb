@@ -1,7 +1,7 @@
 require 'benchmark'
 require 'activerecord-import'
 
-module Palletizer
+module PalletizerHelper
   def palletizer(load_code)
     time = Benchmark.realtime do
       find_all_not_sorted_orders_by_load_code(load_code).each do |order|
