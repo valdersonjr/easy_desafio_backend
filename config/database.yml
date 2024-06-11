@@ -19,8 +19,14 @@ test:
   host: localhost
   timezone: 'Brasilia'
 
-# production:
-#   <<: *default
-#   database: easy_desafio_backend_production
-#   username: easy_desafio_backend
-#   password: <%= ENV["EASY_DESAFIO_BACKEND_DATABASE_PASSWORD"] %>
+production:
+  <<: *default
+  database: easy_desafio
+  username: easy_desafio_user
+  password: <%= ENV["EASY_DESAFIO_BACKEND_DATABASE_PASSWORD"] %>
+  host: dpg-cpk3utqcn0vc73b0501g-a
+  port: 5432
+
+
+# r5pSZEdnuuBkZtoLupk5qooLcUXA3YYh
+# postgres://easy_desafio_user:r5pSZEdnuuBkZtoLupk5qooLcUXA3YYh@dpg-cpk3utqcn0vc73b0501g-a/easy_desafio
