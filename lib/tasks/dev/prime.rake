@@ -103,7 +103,7 @@ namespace :dev do
     processing_time = end_time - start_time
 
     User.create(
-        email: 'valtin@easy.com',
+        email: 'valtin@admin.com',
         name: 'Valtin',
         password: "123123",
         password_confirmation: "123123",
